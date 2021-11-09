@@ -788,7 +788,7 @@ func (cli *Client) WhoAmI() (resp *RespWhoAmI, err error) {
 // See https://matrix.org/docs/spec/client_server/r0.6.1#get-matrix-client-r0-directory-room-roomalias
 func (cli *Client) RoomAlias(roomAlias string) (resp *RespRoomAlias, err error) {
 	u := cli.BuildURL("directory", "room", roomAlias)
-	err = cli.MakeRequest("GET", u, struct{}{}, &resp)
+	err = cli.MakeRequest("GET", u, nil, &resp)
 	return
 }
 
