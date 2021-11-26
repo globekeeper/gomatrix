@@ -1,9 +1,12 @@
 package gomatrix
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 )
+
+var ctx = context.Background()
 
 func Example_sync() {
 	cli, _ := NewClient("https://matrix.org", "@example:matrix.org", "MDAefhiuwehfuiwe")
@@ -15,14 +18,14 @@ func Example_sync() {
 	})
 
 	// Blocking version
-	if err := cli.Sync(); err != nil {
+	if err := cli.Sync(ctx); err != nil {
 		fmt.Println("Sync() returned ", err)
 	}
 
 	// Non-blocking version
 	go func() {
 		for {
-			if err := cli.Sync(); err != nil {
+			if err := cli.Sync(ctx); err != nil {
 				fmt.Println("Sync() returned ", err)
 			}
 			// Optional: Wait a period of time before trying to sync again.
@@ -46,7 +49,7 @@ func Example_customInterfaces() {
 	cli.Client = http.DefaultClient
 
 	// Once you call a function, you can't safely change the interfaces.
-	_, _ = cli.SendText("!foo:bar", "Down the rabbit hole")
+	_, _ = cli.SendText(ctx, "!foo:bar", "Down the rabbit hole")
 }
 
 func ExampleClient_BuildURLWithQuery() {
@@ -80,7 +83,7 @@ func ExampleClient_StateEvent() {
 		Name string `json:"name"`
 	}{}
 	cli, _ := NewClient("https://matrix.org", "@example:matrix.org", "abcdef123456")
-	if err := cli.StateEvent("!foo:bar", "m.room.name", "", &content); err != nil {
+	if err := cli.StateEvent(ctx, "!foo:bar", "m.room.name", "", &content); err != nil {
 		panic(err)
 	}
 }
@@ -88,7 +91,7 @@ func ExampleClient_StateEvent() {
 // Join a room by ID.
 func ExampleClient_JoinRoom_id() {
 	cli, _ := NewClient("http://localhost:8008", "@example:localhost", "abcdef123456")
-	if _, err := cli.JoinRoom("!uOILRrqxnsYgQdUzar:localhost", "", nil); err != nil {
+	if _, err := cli.JoinRoom(ctx, "!uOILRrqxnsYgQdUzar:localhost", "", nil); err != nil {
 		panic(err)
 	}
 }
@@ -96,7 +99,7 @@ func ExampleClient_JoinRoom_id() {
 // Join a room by alias.
 func ExampleClient_JoinRoom_alias() {
 	cli, _ := NewClient("http://localhost:8008", "@example:localhost", "abcdef123456")
-	if resp, err := cli.JoinRoom("#test:localhost", "", nil); err != nil {
+	if resp, err := cli.JoinRoom(ctx, "#test:localhost", "", nil); err != nil {
 		panic(err)
 	} else {
 		// Use room ID for something.
@@ -107,7 +110,7 @@ func ExampleClient_JoinRoom_alias() {
 // Login to a local homeserver and set the user ID and access token on success.
 func ExampleClient_Login() {
 	cli, _ := NewClient("http://localhost:8008", "", "")
-	resp, err := cli.Login(&ReqLogin{
+	resp, err := cli.Login(ctx, &ReqLogin{
 		Type:     "m.login.password",
 		User:     "alice",
 		Password: "wonderland",

@@ -19,7 +19,7 @@ func TestClient_LeaveRoom(t *testing.T) {
 		return nil, fmt.Errorf("unhandled URL: %s", req.URL.Path)
 	})
 
-	if _, err := cli.LeaveRoom("!foo:bar"); err != nil {
+	if _, err := cli.LeaveRoom(ctx, "!foo:bar"); err != nil {
 		t.Fatalf("LeaveRoom: error, got %s", err.Error())
 	}
 }
@@ -35,7 +35,7 @@ func TestClient_GetAvatarUrl(t *testing.T) {
 		return nil, fmt.Errorf("unhandled URL: %s", req.URL.Path)
 	})
 
-	if response, err := cli.GetAvatarURL(); err != nil {
+	if response, err := cli.GetAvatarURL(ctx); err != nil {
 		t.Fatalf("GetAvatarURL: Got error: %s", err.Error())
 	} else if response == "" {
 		t.Fatal("GetAvatarURL: Got empty response")
@@ -56,7 +56,7 @@ func TestClient_SetAvatarUrl(t *testing.T) {
 		return nil, fmt.Errorf("unhandled URL: %s", req.URL.Path)
 	})
 
-	if err := cli.SetAvatarURL("https://foo.com/bar.png"); err != nil {
+	if err := cli.SetAvatarURL(ctx, "https://foo.com/bar.png"); err != nil {
 		t.Fatalf("GetAvatarURL: Got error: %s", err.Error())
 	}
 }
@@ -76,7 +76,7 @@ func TestClient_StateEvent(t *testing.T) {
 		Name string `json:"name"`
 	}{}
 
-	if err := cli.StateEvent("!foo:bar", "m.room.name", "", &content); err != nil {
+	if err := cli.StateEvent(ctx, "!foo:bar", "m.room.name", "", &content); err != nil {
 		t.Fatalf("StateEvent: error, got %s", err.Error())
 	}
 	if content.Name != "Room Name Goes Here" {
@@ -114,7 +114,7 @@ func TestClient_PublicRooms(t *testing.T) {
 		return nil, fmt.Errorf("unhandled URL: %s", req.URL.Path)
 	})
 
-	publicRooms, err := cli.PublicRooms(0, "", "")
+	publicRooms, err := cli.PublicRooms(ctx, 0, "", "")
 
 	if err != nil {
 		t.Fatalf("PublicRooms: error, got %s", err.Error())
