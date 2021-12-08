@@ -42,16 +42,18 @@ type Client struct {
 type HTTPError struct {
 	Contents     []byte
 	WrappedError error
-	Message      string
+	MatrixError  RespError
 	Code         int
 }
 
 func (e HTTPError) Error() string {
-	var wrappedErrMsg string
-	if e.WrappedError != nil {
-		wrappedErrMsg = e.WrappedError.Error()
+	var err error
+	if e.MatrixError.ErrCode != "" {
+		err = e.MatrixError
+	} else {
+		err = e.WrappedError
 	}
-	return fmt.Sprintf("contents=%v msg=%s code=%d wrapped=%s", e.Contents, e.Message, e.Code, wrappedErrMsg)
+	return fmt.Sprintf("http request failed: code: %d, err: %v", e.Code, err)
 }
 
 // BuildURL builds a URL with the Client's homeserver/prefix set already.
@@ -216,30 +218,7 @@ func (cli *Client) MakeRequest(ctx context.Context, method string, httpURL strin
 		return err
 	}
 	if res.StatusCode/100 != 2 { // not 2xx
-		contents, err := ioutil.ReadAll(res.Body)
-		if err != nil {
-			return err
-		}
-
-		var wrap error
-		var respErr RespError
-		if _ = json.Unmarshal(contents, &respErr); respErr.ErrCode != "" {
-			wrap = respErr
-		}
-
-		// If we failed to decode as RespError, don't just drop the HTTP body, include it in the
-		// HTTP error instead (e.g proxy errors which return HTML).
-		msg := "Failed to " + method + " JSON to " + req.URL.Path
-		if wrap == nil {
-			msg = msg + ": " + string(contents)
-		}
-
-		return HTTPError{
-			Contents:     contents,
-			Code:         res.StatusCode,
-			Message:      msg,
-			WrappedError: wrap,
-		}
+		return respToHttpErr(res, req, method)
 	}
 
 	if resBody != nil && res.Body != nil {
@@ -247,6 +226,21 @@ func (cli *Client) MakeRequest(ctx context.Context, method string, httpURL strin
 	}
 
 	return nil
+}
+
+func respToHttpErr(res *http.Response, req *http.Request, method string) *HTTPError {
+	httpErr := &HTTPError{
+		Code: res.StatusCode,
+	}
+	contents, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		httpErr.WrappedError = fmt.Errorf("upload request failed: failed to read response body: %w", err)
+		return httpErr
+	}
+	httpErr.Contents = contents
+	json.Unmarshal(contents, &httpErr.MatrixError)
+	httpErr.WrappedError = fmt.Errorf("request failed: method: %s path: %s body: %s", method, req.URL.Path, contents)
+	return httpErr
 }
 
 // CreateFilter makes an HTTP request according to http://matrix.org/docs/spec/client_server/r0.2.0.html#post-matrix-client-r0-user-userid-filter
@@ -281,7 +275,7 @@ func (cli *Client) SyncRequest(ctx context.Context, timeout int, since, filterID
 func (cli *Client) register(ctx context.Context, u string, req *ReqRegister) (resp *RespRegister, uiaResp *RespUserInteractive, err error) {
 	err = cli.MakeRequest(ctx, "POST", u, req, &resp)
 	if err != nil {
-		httpErr, ok := err.(HTTPError)
+		httpErr, ok := err.(*HTTPError)
 		if !ok { // network error
 			return
 		}
@@ -683,7 +677,7 @@ func (cli *Client) UploadLink(ctx context.Context, link string) (*RespMediaUploa
 // UploadToContentRepo uploads the given bytes to the content repository and returns an MXC URI.
 // See http://matrix.org/docs/spec/client_server/r0.2.0.html#post-matrix-media-r0-upload
 func (cli *Client) UploadToContentRepo(ctx context.Context, content io.Reader, contentType string, contentLength int64) (*RespMediaUpload, error) {
-	req, err := http.NewRequest("POST", cli.BuildBaseURL("_matrix/media/r0/upload"), content)
+	req, err := http.NewRequest(http.MethodPost, cli.BuildBaseURL("_matrix/media/r0/upload"), content)
 	if err != nil {
 		return nil, err
 	}
@@ -703,18 +697,7 @@ func (cli *Client) UploadToContentRepo(ctx context.Context, content io.Reader, c
 	}
 
 	if res.StatusCode != 200 {
-		contents, err := ioutil.ReadAll(res.Body)
-		if err != nil {
-			return nil, HTTPError{
-				Message: "Upload request failed - Failed to read response body: " + err.Error(),
-				Code:    res.StatusCode,
-			}
-		}
-		return nil, HTTPError{
-			Contents: contents,
-			Message:  "Upload request failed: " + string(contents),
-			Code:     res.StatusCode,
-		}
+		return nil, respToHttpErr(res, req, http.MethodPost)
 	}
 
 	var m RespMediaUpload

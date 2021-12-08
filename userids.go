@@ -83,15 +83,15 @@ func DecodeUserLocalpart(str string) (string, error) {
 	for i := 0; i < len(strBytes); i++ {
 		b := strBytes[i]
 		if !isValidByte(b) {
-			return "", fmt.Errorf("Byte pos %d: Invalid byte", i)
+			return "", fmt.Errorf("byte pos %d: Invalid byte", i)
 		}
 
 		if b == '_' { // next byte is a-z and should be upper-case or is another _ and should be a literal _
 			if i+1 >= len(strBytes) {
-				return "", fmt.Errorf("Byte pos %d: expected _[a-z_] encoding but ran out of string", i)
+				return "", fmt.Errorf("byte pos %d: expected _[a-z_] encoding but ran out of string", i)
 			}
 			if !isValidEscapedChar(strBytes[i+1]) { // invalid escaping
-				return "", fmt.Errorf("Byte pos %d: expected _[a-z_] encoding", i)
+				return "", fmt.Errorf("byte pos %d: expected _[a-z_] encoding", i)
 			}
 			if strBytes[i+1] == '_' {
 				outputBuffer.WriteByte('_')
@@ -101,7 +101,7 @@ func DecodeUserLocalpart(str string) (string, error) {
 			i++ // skip next byte since we just handled it
 		} else if b == '=' { // next 2 bytes are hex and should be buffered ready to be read as utf8
 			if i+2 >= len(strBytes) {
-				return "", fmt.Errorf("Byte pos: %d: expected quote-printable encoding but ran out of string", i)
+				return "", fmt.Errorf("byte pos: %d: expected quote-printable encoding but ran out of string", i)
 			}
 			dst := make([]byte, 1)
 			_, err := hex.Decode(dst, strBytes[i+1:i+3])
