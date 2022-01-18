@@ -760,7 +760,7 @@ func (cli *Client) TurnServer(ctx context.Context) (resp *RespTurnServer, err er
 // See https://matrix.org/docs/spec/client_server/r0.6.1#get-matrix-client-r0-account-whoami
 func (cli *Client) WhoAmI(ctx context.Context) (resp *RespWhoAmI, err error) {
 	u := cli.BuildURL("account", "whoami")
-	err = cli.MakeRequest(ctx, "GET", u, struct{}{}, &resp)
+	err = cli.MakeRequest(ctx, "GET", u, nil, &resp)
 	return
 }
 
