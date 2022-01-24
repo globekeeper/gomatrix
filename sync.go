@@ -43,9 +43,6 @@ func NewDefaultSyncer(userID string, store Storer) *DefaultSyncer {
 // ProcessResponse processes the /sync response in a way suitable for bots. "Suitable for bots" means a stream of
 // unrepeating events. Returns a fatal error if a listener panics.
 func (s *DefaultSyncer) ProcessResponse(res *RespSync, since string) (err error) {
-	if !s.shouldProcessResponse(res, since) {
-		return
-	}
 
 	defer func() {
 		if r := recover(); r != nil {
@@ -86,6 +83,9 @@ func (s *DefaultSyncer) ProcessResponse(res *RespSync, since string) (err error)
 				s.notifyListeners(&event)
 			}
 		}
+	}
+	for i := range res.Presence.Events {
+		s.notifyListeners(&res.Presence.Events[i])
 	}
 	return
 }
