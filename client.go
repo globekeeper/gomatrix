@@ -44,6 +44,7 @@ type HTTPError struct {
 	WrappedError error
 	MatrixError  RespError
 	Code         int
+	Path         string
 }
 
 func (e HTTPError) Error() string {
@@ -53,7 +54,7 @@ func (e HTTPError) Error() string {
 	} else {
 		err = e.WrappedError
 	}
-	return fmt.Sprintf("http request failed: code: %d, err: %v", e.Code, err)
+	return fmt.Sprintf("http request failed: code: %d path: %s err: %v", e.Code, e.Path, err)
 }
 
 // BuildURL builds a URL with the Client's homeserver/prefix set already.
@@ -231,6 +232,7 @@ func (cli *Client) MakeRequest(ctx context.Context, method string, httpURL strin
 func respToHttpErr(res *http.Response, req *http.Request, method string) *HTTPError {
 	httpErr := &HTTPError{
 		Code: res.StatusCode,
+		Path: req.URL.Path,
 	}
 	contents, err := ioutil.ReadAll(res.Body)
 	if err != nil {
