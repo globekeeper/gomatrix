@@ -113,3 +113,9 @@ type ThreePIDCreds struct {
 	IdServer      string `json:"id_server"`
 	Sid           string `json:"sid"`
 }
+
+type ReqHierarchy struct {
+	RoomId        string
+	SuggestedOnly bool
+	Limit         int
+}

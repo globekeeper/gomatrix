@@ -859,6 +859,15 @@ func (cli *Client) SendPowerLevels(ctx context.Context, roomID string, pl PowerL
 	return cli.SendStateEvent(ctx, roomID, "m.room.power_levels", "", pl)
 }
 
+func (cli *Client) Hierarchy(ctx context.Context, req ReqHierarchy) (resp RespHierarchy, err error) {
+	u := cli.BuildURLWithQuery([]string{"rooms", req.RoomId, "hierarchy"}, map[string]string{
+		"suggested_only": strconv.FormatBool(req.SuggestedOnly),
+		"limit":          strconv.Itoa(req.Limit),
+	})
+	err = cli.MakeRequest(ctx, "GET", u, nil, &resp)
+	return
+}
+
 func txnID() string {
 	return "go" + strconv.FormatInt(time.Now().UnixNano(), 10)
 }
