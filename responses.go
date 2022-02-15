@@ -256,7 +256,8 @@ type RespEmailRequestToken struct {
 }
 
 type ChildrenState struct {
-	RoomId string `json:"room_id"`
+	RoomId   string `json:"room_id"`
+	StateKey string `json:"state_key"`
 }
 
 type HierarchyRoom struct {
