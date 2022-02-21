@@ -211,7 +211,8 @@ type RespTurnServer struct {
 
 // RespWhoAmI is JSON response for https://matrix.org/docs/spec/client_server/r0.6.1#get-matrix-client-r0-account-whoami
 type RespWhoAmI struct {
-	UserId string `json:"user_id"`
+	UserId   string `json:"user_id"`
+	DeviceId string `json:"device_id"`
 }
 
 // RespRoomAlias is JSON response for https://matrix.org/docs/spec/client_server/r0.6.1#get-matrix-client-r0-directory-room-roomalias
