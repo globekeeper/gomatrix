@@ -7,6 +7,7 @@ type ReqRegister struct {
 	Password                 string      `json:"password,omitempty"`
 	DeviceID                 string      `json:"device_id,omitempty"`
 	InitialDeviceDisplayName string      `json:"initial_device_display_name"`
+	InhibitLogin             bool        `json:"inhibit_login"`
 	Auth                     interface{} `json:"auth,omitempty"`
 }
 
