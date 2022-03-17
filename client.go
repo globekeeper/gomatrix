@@ -790,6 +790,18 @@ func (cli *Client) RegisterEmailRequestToken(ctx context.Context, req ReqEmailRe
 	return
 }
 
+func (cli *Client) PasswordEmailRequestToken(ctx context.Context, req ReqEmailRequestToken) (resp *RespEmailRequestToken, err error) {
+	u := cli.BuildURL("account", "password", "email", "requestToken")
+	err = cli.MakeRequest(ctx, "POST", u, req, &resp)
+	return
+}
+
+func (cli *Client) AccountPassword(ctx context.Context, req ReqAccountPassword) (err error) {
+	u := cli.BuildURL("account", "password")
+	err = cli.MakeRequest(ctx, "POST", u, req, nil)
+	return
+}
+
 // GetAccountData gets some account_data for the client.
 // See https://matrix.org/docs/spec/client_server/r0.6.1#get-matrix-client-r0-user-userid-account-data-type
 func (cli *Client) GetAccountData(ctx context.Context, req ReqGetAccountData) (resp RespAccountData, err error) {

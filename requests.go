@@ -120,3 +120,9 @@ type ReqHierarchy struct {
 	SuggestedOnly bool
 	Limit         int
 }
+
+type ReqAccountPassword struct {
+	LogoutDevices bool        `json:"logout_devices"`
+	NewPassword   string      `json:"new_password"`
+	Auth          interface{} `json:"auth"`
+}
