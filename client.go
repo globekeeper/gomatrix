@@ -882,6 +882,12 @@ func (cli *Client) Hierarchy(ctx context.Context, req ReqHierarchy) (resp RespHi
 	return
 }
 
+func (cli *Client) Deactivate(ctx context.Context) (err error) {
+	u := cli.BuildURL("account", "deactivate")
+	err = cli.MakeRequest(ctx, "POST", u, struct{}{}, nil)
+	return
+}
+
 func txnID() string {
 	return "go" + strconv.FormatInt(time.Now().UnixNano(), 10)
 }
