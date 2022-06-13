@@ -36,6 +36,7 @@ type ReqCreateRoom struct {
 	InitialState    []Event                `json:"initial_state,omitempty"`
 	Preset          string                 `json:"preset,omitempty"`
 	IsDirect        bool                   `json:"is_direct,omitempty"`
+	RoomVersion     string                 `json:"room_version,omitempty"`
 }
 
 // ReqRedact is the JSON request for http://matrix.org/docs/spec/client_server/r0.2.0.html#put-matrix-client-r0-rooms-roomid-redact-eventid-txnid
