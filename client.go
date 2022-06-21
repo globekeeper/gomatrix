@@ -242,7 +242,11 @@ func respToHttpErr(res *http.Response, req *http.Request, method string) *HTTPEr
 		return httpErr
 	}
 	httpErr.Contents = contents
-	json.Unmarshal(contents, &httpErr.MatrixError)
+	err = json.Unmarshal(contents, &httpErr.MatrixError)
+	if err != nil {
+		httpErr.WrappedError = fmt.Errorf("upload request failed: failed to unmarshall response: %w", err)
+		return httpErr
+	}
 	httpErr.WrappedError = fmt.Errorf("request failed: method: %s path: %s body: %s", method, req.URL.Path, contents)
 	return httpErr
 }
