@@ -269,3 +269,14 @@ type HierarchyRoom struct {
 type RespHierarchy struct {
 	Rooms []HierarchyRoom `json:"rooms"`
 }
+
+type RespUserDirectorySearch struct {
+	Limited bool
+	Result  []Result
+}
+
+type Result struct {
+	AvatarUrl   string `json:"avatar_url"`
+	DisplayName string `json:"display_name"`
+	UserId      string `json:"user_id"`
+}

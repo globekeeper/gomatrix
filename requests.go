@@ -127,3 +127,8 @@ type ReqAccountPassword struct {
 	NewPassword   string      `json:"new_password"`
 	Auth          interface{} `json:"auth"`
 }
+
+type ReqUserDirectorySearch struct {
+	Limit      int32  `json:"limit"`
+	SearchTerm string `json:"search_term"`
+}

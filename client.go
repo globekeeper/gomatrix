@@ -892,6 +892,12 @@ func (cli *Client) Deactivate(ctx context.Context) (err error) {
 	return
 }
 
+func (cli *Client) UserDirectorySearch(ctx context.Context, req *ReqUserDirectorySearch) (resp RespUserDirectorySearch, err error) {
+	u := cli.BuildURL("user_directory", "search")
+	err = cli.MakeRequest(ctx, "POST", u, req, &resp)
+	return
+}
+
 func txnID() string {
 	return "go" + strconv.FormatInt(time.Now().UnixNano(), 10)
 }
