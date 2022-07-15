@@ -271,8 +271,8 @@ type RespHierarchy struct {
 }
 
 type RespUserDirectorySearch struct {
-	Limited bool
-	Result  []Result
+	Limited bool     `json:"limited"`
+	Results []Result `json:"results"`
 }
 
 type Result struct {
