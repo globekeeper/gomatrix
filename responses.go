@@ -3,8 +3,9 @@ package gomatrix
 // RespError is the standard JSON error response from Homeservers. It also implements the Golang "error" interface.
 // See http://matrix.org/docs/spec/client_server/r0.2.0.html#api-standards
 type RespError struct {
-	ErrCode string `json:"errcode"`
-	Err     string `json:"error"`
+	ErrCode      string `json:"errcode"`
+	Err          string `json:"error"`
+	RetryAfterMs int    `json:"retry_after_ms"`
 }
 
 // Error returns the errcode and error message.

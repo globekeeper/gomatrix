@@ -6,10 +6,13 @@ package gomatrix
 import (
 	"bytes"
 	"context"
+	"encoding/binary"
 	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
+	"math/rand"
+	"net"
 	"net/http"
 	"net/url"
 	"path"
@@ -34,8 +37,9 @@ type Client struct {
 	// See http://matrix.org/docs/spec/application_service/unstable.html#identity-assertion
 	AppServiceUserID string
 
-	syncingMutex sync.Mutex // protects syncingID
-	syncingID    uint32     // Identifies the current Sync. Only one Sync can be active at any given time.
+	syncingMutex           sync.Mutex // protects syncingID
+	syncingID              uint32     // Identifies the current Sync. Only one Sync can be active at any given time.
+	RandomizeXForwardedFor bool       // If true, client will add a random IP as a X-Forwarded-For header. Used to bypass rate limiting in tests. rand.Seed() is not called.
 }
 
 // HTTPError An HTTP Error response, which may wrap an underlying native Go Error.
@@ -210,6 +214,12 @@ func (cli *Client) MakeRequest(ctx context.Context, method string, httpURL strin
 
 	if cli.AccessToken != "" {
 		req.Header.Set("Authorization", "Bearer "+cli.AccessToken)
+	}
+	if cli.RandomizeXForwardedFor {
+		ip := rand.Uint32()
+		buf := make([]byte, 4)
+		binary.LittleEndian.PutUint32(buf, ip)
+		req.Header.Set("X-Forwarded-For", net.IP(buf).String())
 	}
 
 	res, err := cli.Client.Do(req)
