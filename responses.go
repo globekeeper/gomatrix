@@ -138,6 +138,7 @@ type RespLogin struct {
 	HomeServer  string               `json:"home_server"`
 	UserID      string               `json:"user_id"`
 	WellKnown   DiscoveryInformation `json:"well_known"`
+	TotpSid     string               `json:"totp_sid"`
 }
 
 // DiscoveryInformation is the JSON Response for https://matrix.org/docs/spec/client_server/r0.6.0#get-well-known-matrix-client and a part of the JSON Response for https://matrix.org/docs/spec/client_server/r0.6.0#post-matrix-client-r0-login
@@ -249,9 +250,10 @@ type ThreePID struct {
 type RespAccountData map[string]interface{}
 
 // RespEmailRequestToken is JSON response for
-//		https://matrix.org/docs/spec/client_server/r0.6.1#post-matrix-client-r0-register-email-requesttoken
-//		https://matrix.org/docs/spec/client_server/r0.6.1#post-matrix-client-r0-account-password-email-requesttoken
-//		https://matrix.org/docs/spec/client_server/r0.6.1#post-matrix-client-r0-account-3pid-email-requesttoken
+//
+//	https://matrix.org/docs/spec/client_server/r0.6.1#post-matrix-client-r0-register-email-requesttoken
+//	https://matrix.org/docs/spec/client_server/r0.6.1#post-matrix-client-r0-account-password-email-requesttoken
+//	https://matrix.org/docs/spec/client_server/r0.6.1#post-matrix-client-r0-account-3pid-email-requesttoken
 type RespEmailRequestToken struct {
 	Sid       string `json:"sid"`
 	SumbitURL string `json:"submit_url"`
