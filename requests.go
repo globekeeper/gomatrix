@@ -22,6 +22,9 @@ type ReqLogin struct {
 	Token                    string     `json:"token,omitempty"`
 	DeviceID                 string     `json:"device_id,omitempty"`
 	InitialDeviceDisplayName string     `json:"initial_device_display_name,omitempty"`
+	InhibitDevice            bool       `json:"inhibit_device"`
+	TotpSid                  string     `json:"totp_sid"`
+	Passcode                 string     `json:"passcode"`
 }
 
 // ReqCreateRoom is the JSON request for https://matrix.org/docs/spec/client_server/r0.2.0.html#post-matrix-client-r0-createroom
@@ -93,9 +96,10 @@ type ReqPutAccountData struct {
 }
 
 // ReqEmailRequestToken is the JSON request for
-// 		https://matrix.org/docs/spec/client_server/r0.6.1#post-matrix-client-r0-register-email-requesttoken
-//		https://matrix.org/docs/spec/client_server/r0.6.1#post-matrix-client-r0-account-password-email-requesttoken
-//		https://matrix.org/docs/spec/client_server/r0.6.1#post-matrix-client-r0-account-3pid-email-requesttoken
+//
+//	https://matrix.org/docs/spec/client_server/r0.6.1#post-matrix-client-r0-register-email-requesttoken
+//	https://matrix.org/docs/spec/client_server/r0.6.1#post-matrix-client-r0-account-password-email-requesttoken
+//	https://matrix.org/docs/spec/client_server/r0.6.1#post-matrix-client-r0-account-3pid-email-requesttoken
 type ReqEmailRequestToken struct {
 	IdServer      string `json:"id_server,omitempty"`
 	IdAccessToken string `json:"id_access_token,omitempty"`
