@@ -23,9 +23,10 @@ type Syncer interface {
 // replace parts of this default syncer (e.g. the ProcessResponse method). The default syncer uses the observer
 // pattern to notify callers about incoming events. See DefaultSyncer.OnEventType for more information.
 type DefaultSyncer struct {
-	UserID    string
-	Store     Storer
-	listeners map[string][]OnEventListener // event type to listeners array
+	UserID            string
+	Store             Storer
+	listeners         map[string][]OnEventListener // event type to listeners array
+	MultiRoomListener func(userId, mrType string, content interface{}, timestamp int64)
 }
 
 // OnEventListener can be used with DefaultSyncer.OnEventType to be informed of incoming events.
@@ -86,6 +87,13 @@ func (s *DefaultSyncer) ProcessResponse(res *RespSync, since string) (err error)
 	}
 	for i := range res.Presence.Events {
 		s.notifyListeners(&res.Presence.Events[i])
+	}
+	if s.MultiRoomListener != nil {
+		for userId, userMr := range res.Multiroom {
+			for mRtype, data := range userMr {
+				s.MultiRoomListener(userId, mRtype, data.Content, data.Timestamp)
+			}
+		}
 	}
 	return
 }

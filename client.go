@@ -119,6 +119,7 @@ func (cli *Client) ClearCredentials() {
 //   - The failure to create a filter.
 //   - Client.Syncer.OnFailedSync returning an error in response to a failed sync.
 //   - Client.Syncer.ProcessResponse returning an error.
+//
 // If you wish to continue retrying in spite of these fatal errors, call Sync() again.
 func (cli *Client) Sync(ctx context.Context) error {
 	// Mark the client as syncing.
@@ -138,7 +139,7 @@ func (cli *Client) Sync(ctx context.Context) error {
 	}
 
 	for {
-		resSync, err := cli.SyncRequest(ctx, 30000, nextBatch, filterID, false, "")
+		resSync, err := cli.SyncRequest(ctx, 30000, nextBatch, "91", false, "")
 		if err != nil {
 			duration, err2 := cli.Syncer.OnFailedSync(resSync, err)
 			if err2 != nil {
@@ -333,14 +334,14 @@ func (cli *Client) RegisterGuest(ctx context.Context, req *ReqRegister) (*RespRe
 //
 // This does not set credentials on the client instance. See SetCredentials() instead.
 //
-// 	res, err := cli.RegisterDummy(&gomatrix.ReqRegister{
-//		Username: "alice",
-//		Password: "wonderland",
-//	})
-//  if err != nil {
-// 		panic(err)
-// 	}
-// 	token := res.AccessToken
+//		res, err := cli.RegisterDummy(&gomatrix.ReqRegister{
+//			Username: "alice",
+//			Password: "wonderland",
+//		})
+//	 if err != nil {
+//			panic(err)
+//		}
+//		token := res.AccessToken
 func (cli *Client) RegisterDummy(ctx context.Context, req *ReqRegister) (*RespRegister, error) {
 	res, uia, err := cli.Register(ctx, req)
 	if err != nil && uia == nil {

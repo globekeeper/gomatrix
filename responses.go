@@ -201,6 +201,10 @@ type RespSync struct {
 			} `json:"invite_state"`
 		} `json:"invite"`
 	} `json:"rooms"`
+	Multiroom map[string]map[string]struct {
+		Content   interface{} `json:"content"`
+		Timestamp int64       `json:"timestamp"`
+	} `json:"multiroom"`
 }
 
 // RespTurnServer is the JSON response from a Turn Server
