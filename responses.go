@@ -286,4 +286,5 @@ type Result struct {
 	AvatarUrl   string `json:"avatar_url"`
 	DisplayName string `json:"display_name"`
 	UserId      string `json:"user_id"`
+	Status      int32  `json:"status"`
 }
