@@ -262,15 +262,20 @@ type RespEmailRequestToken struct {
 	Sid       string `json:"sid"`
 	SumbitURL string `json:"submit_url"`
 }
+type Content struct {
+	Order string `json:"order"`
+}
 
 type ChildrenState struct {
-	RoomId   string `json:"room_id"`
-	StateKey string `json:"state_key"`
+	RoomId   string  `json:"room_id"`
+	StateKey string  `json:"state_key"`
+	Content  Content `json:"content"`
 }
 
 type HierarchyRoom struct {
 	ChildrenState []ChildrenState `json:"children_state"`
 	RoomId        string          `json:"room_id"`
+	RoomName      string          `json:"name"`
 }
 
 type RespHierarchy struct {
