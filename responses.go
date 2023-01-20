@@ -262,6 +262,8 @@ type RespEmailRequestToken struct {
 	Sid       string `json:"sid"`
 	SumbitURL string `json:"submit_url"`
 }
+
+// Order "a" for primary public room, "aaa" default.
 type Content struct {
 	Order string `json:"order"`
 }
