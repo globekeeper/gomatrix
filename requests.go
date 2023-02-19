@@ -25,6 +25,7 @@ type ReqLogin struct {
 	InhibitDevice            bool       `json:"inhibit_device"`
 	TotpSid                  string     `json:"totp_sid"`
 	Passcode                 string     `json:"passcode"`
+	Sid                      string     `json:"sid,omitempty"`
 }
 
 // ReqCreateRoom is the JSON request for https://matrix.org/docs/spec/client_server/r0.2.0.html#post-matrix-client-r0-createroom
