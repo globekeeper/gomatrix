@@ -235,6 +235,7 @@ type RespGetDevices struct {
 type Device struct {
 	DeviceId    string `json:"device_id" example:"l4kRnv3u"`
 	DisplayName string `json:"display_name" example:"web"`
+	LastSeenIP  string `json:"last_seen_ip" example:"1.2.3.4"`
 	LastSeenTs  int    `json:"last_seen_ts" example:"1620644706232"`
 }
 
