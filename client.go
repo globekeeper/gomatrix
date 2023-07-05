@@ -876,6 +876,24 @@ func (cli *Client) PowerLevels(ctx context.Context, roomID string) (resp PowerLe
 	return
 }
 
+func (cli *Client) LeftMembers(ctx context.Context, roomId string) (resp RespMembers, err error) {
+	query := map[string]string{
+		"membership": "leave",
+	}
+	u := cli.BuildURLWithQuery([]string{"rooms", roomId, "members"}, query)
+	err = cli.MakeRequest(ctx, "GET", u, nil, &resp)
+	return
+}
+
+func (cli *Client) InvitedMembers(ctx context.Context, roomId string) (resp RespMembers, err error) {
+	query := map[string]string{
+		"membership": "invite",
+	}
+	u := cli.BuildURLWithQuery([]string{"rooms", roomId, "members"}, query)
+	err = cli.MakeRequest(ctx, "GET", u, nil, &resp)
+	return
+}
+
 func (cli *Client) Members(ctx context.Context, roomId string) (resp RespMembers, err error) {
 	u := cli.BuildURL("rooms", roomId, "members")
 	err = cli.MakeRequest(ctx, "GET", u, nil, &resp)
