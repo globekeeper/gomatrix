@@ -165,6 +165,74 @@ type RespMembers struct {
 	Chunk []Event `json:"chunk"`
 }
 
+type PushRuleType string
+
+const (
+	OverrideRule  PushRuleType = "override"
+	ContentRule   PushRuleType = "content"
+	RoomRule      PushRuleType = "room"
+	SenderRule    PushRuleType = "sender"
+	UnderrideRule PushRuleType = "underride"
+)
+
+// PushActionType is the type of a PushAction
+type PushActionType string
+
+// The allowed push action types as specified in spec section 11.12.1.4.1.
+const (
+	ActionNotify     PushActionType = "notify"
+	ActionDontNotify PushActionType = "dont_notify"
+	ActionCoalesce   PushActionType = "coalesce"
+	ActionSetTweak   PushActionType = "set_tweak"
+)
+
+// PushCondKind is the type of a push condition.
+type PushCondKind string
+
+// The allowed push condition kinds as specified in https://spec.matrix.org/v1.2/client-server-api/#conditions-1
+const (
+	KindEventMatch            PushCondKind = "event_match"
+	KindContainsDisplayName   PushCondKind = "contains_display_name"
+	KindRoomMemberCount       PushCondKind = "room_member_count"
+	KindEventPropertyIs       PushCondKind = "event_property_is"
+	KindEventPropertyContains PushCondKind = "event_property_contains"
+
+	// MSC3664: https://github.com/matrix-org/matrix-spec-proposals/pull/3664
+
+	KindRelatedEventMatch         PushCondKind = "related_event_match"
+	KindUnstableRelatedEventMatch PushCondKind = "im.nheko.msc3664.related_event_match"
+)
+
+type RelationType string
+
+const (
+	RelReplace    RelationType = "m.replace"
+	RelReference  RelationType = "m.reference"
+	RelAnnotation RelationType = "m.annotation"
+	RelThread     RelationType = "m.thread"
+)
+
+// any is an alias for interface{} and is equivalent to interface{} in all ways.
+type any = interface{}
+
+// PushCondition wraps a condition that is required for a specific PushRule to be used.
+type PushCondition struct {
+	// The type of the condition.
+	Kind PushCondKind `json:"kind"`
+	// The dot-separated field of the event to match. Only applicable if kind is EventMatch.
+	Key string `json:"key,omitempty"`
+	// The glob-style pattern to match the field against. Only applicable if kind is EventMatch.
+	Pattern string `json:"pattern,omitempty"`
+	// The exact value to match the field against. Only applicable if kind is EventPropertyIs or EventPropertyContains.
+	Value any `json:"value,omitempty"`
+	// The condition that needs to be fulfilled for RoomMemberCount-type conditions.
+	// A decimal integer optionally prefixed by ==, <, >, >= or <=. Prefix "==" is assumed if no prefix found.
+	MemberCountCondition string `json:"is,omitempty"`
+
+	// The relation type for related_event_match from MSC3664
+	RelType RelationType `json:"rel_type,omitempty"`
+}
+
 var htmlRegex = regexp.MustCompile("<[^<]+?>")
 
 // GetHTMLMessage returns an HTMLMessage with the body set to a stripped version of the provided HTML, in addition
