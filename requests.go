@@ -137,3 +137,12 @@ type ReqUserDirectorySearch struct {
 	Limit      int32  `json:"limit"`
 	SearchTerm string `json:"search_term"`
 }
+
+type ReqPutPushRule struct {
+	Before string `json:"-"`
+	After  string `json:"-"`
+
+	Actions    []PushActionType `json:"actions"`
+	Conditions []PushCondition  `json:"conditions"`
+	Pattern    string           `json:"pattern"`
+}

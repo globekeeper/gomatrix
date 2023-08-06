@@ -954,3 +954,25 @@ func NewClient(homeserverURL, userID, accessToken string) (*Client, error) {
 
 	return &cli, nil
 }
+
+func (cli *Client) PutPushRule(ctx context.Context, scope string, kind string, ruleID string, req *ReqPutPushRule) error {
+	query := make(map[string]string)
+	if len(req.After) > 0 {
+		query["after"] = req.After
+	}
+	if len(req.Before) > 0 {
+		query["before"] = req.Before
+	}
+
+	urlPath := cli.BuildURLWithQuery([]string{"v3", "pushrules", scope, kind, ruleID}, query)
+	err := cli.MakeRequest(ctx, "PUT", urlPath, req, nil)
+	return err
+}
+
+func (cli *Client) DeletePushRule(ctx context.Context, scope string, kind string, ruleID string) error {
+	query := make(map[string]string)
+
+	urlPath := cli.BuildURLWithQuery([]string{"v3", "pushrules", scope, kind, ruleID}, query)
+	err := cli.MakeRequest(ctx, "DELETE", urlPath, nil, nil)
+	return err
+}
